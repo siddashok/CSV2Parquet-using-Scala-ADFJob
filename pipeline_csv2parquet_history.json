@@ -1,0 +1,78 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "factoryName": {
+        "type": "string",
+        "metadata": "Data Factory name"
+      },
+      "<dbx_linkedservice>": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+      {
+        "name": "[concat(parameters('factoryName'), '/pipeline_csv2parquet_history')]",
+        "type": "Microsoft.DataFactory/factories/pipelines",
+        "apiVersion": "2018-06-01",
+        "properties": {
+          "description": "Pipeline to convert CSV to Parquet ",
+          "activities": [
+            {
+              "name": "CSV to Parquet Conversion",
+              "type": "DatabricksNotebook",
+              "dependsOn": [
+                
+              ],
+              "policy": {
+                "timeout": "7.00:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "userProperties": [
+                
+              ],
+              "typeProperties": {
+                "notebookPath": "/Siddharth/CSV To Parquet Conversion",
+                "baseParameters": {
+                  "AssetPath": {
+                    "value": "@variables('AssetPath')",
+                    "type": "Expression"
+                  },
+                  "yearMonthPath": {
+                    "value": "@variables('yearMonthPath')",
+                    "type": "Expression"
+                  }
+                }
+              },
+              "linkedServiceName": {
+                "referenceName": "[parameters('<dbx_linkedservice>')]",
+                "type": "LinkedServiceReference"
+              }
+            }
+          ],
+          "variables": {
+            "AssetPath": {
+              "type": "String",
+              "defaultValue": "<defaultvalue>"
+            },
+            "yearMonthPath": {
+              "type": "String",
+              "defaultValue": "<defaultvalue>"
+            }
+          },
+          "annotations": [
+            
+          ]
+        },
+        "dependsOn": [
+          
+        ]
+      }
+    ]
+  }
