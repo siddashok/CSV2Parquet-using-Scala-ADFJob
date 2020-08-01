@@ -1,5 +1,6 @@
 // Databricks notebook source
 // DBTITLE 1,Parameterizing the Asset and yearMonth 
+//Uncomment the next two lines for the first time run, for all further run keep them uncommented
 //AssetPath = dbutils.widgets.text("AssetPath","<defaultval>")
 //yearMonthPath = dbutils.widgets.text("yearMonthPath","<defaultval>")
 
@@ -12,14 +13,16 @@ val yearMonth = dbutils.widgets.get("yearMonthPath")
 
 // COMMAND ----------
 
-// DBTITLE 1,CSV Files Storage and Container Details
+// DBTITLE 1,CSV Files Storage and Container Details 
+//provide the Azure storage details where your csv files are located (source)
 val CSVstorageAccountName = ""
 val CSVstorageAccountAccessKey = ""   
 val CSVcontainerName = ""
 
 // COMMAND ----------
 
-// DBTITLE 1,Parquet Files Storage and Container Details (in TSI Storage)
+// DBTITLE 1,Parquet Files Storage and Container Details 
+//provide the Azure storage details where you want to store your parquet files (target)
 val ParquetstorageAccountName = ""
 val ParquetstorageAccountAccessKey = "" //
 val ParquetcontainerName = ""
@@ -48,7 +51,7 @@ sqlContext.setConf("spark.sql.parquet.outputTimestampType","TIMESTAMP_MILLIS")
 // This example requires the CSV columns to match the order of the schema
 
 val schema = StructType(Array(
-  <provide your CSV schema
+  <<provide your CSV schema
   forexample:
   StructField("id_string", StringType, true),
   StructField("timestamp", TimestampType, true),
@@ -57,7 +60,7 @@ val schema = StructType(Array(
   .
   .
   StructField("series.badValue_string", StringType, true)
-  >
+  >>
 ))
 
 val data = sqlContext.read
@@ -66,8 +69,8 @@ val data = sqlContext.read
   .option("header", "true")
   .load("/mnt/" + CSVcontainerName + "/" + Asset + "/" + yearMonth + "/*.csv")    
 
-display(data)
-//data.count()
+display(data).  //display the first 1000 rows 
+data.count().    //displays the number of rows 
 
 // COMMAND ----------
 
@@ -87,10 +90,11 @@ data.write
 
 // COMMAND ----------
 
+// DBTITLE 1,Read Parquet 
 val data2 = sqlContext.read.parquet("/mnt/" + ParquetcontainerName + "/" + Asset + "/" + yearMonth )
 
-display(data2)
-//data2.count()
+display(data2).  //display the first 1000 rows 
+data2.count().    //displays the number of rows 
 
 // COMMAND ----------
 
@@ -105,4 +109,6 @@ dbutils.fs.unmount("/mnt/" + ParquetcontainerName)
 // COMMAND ----------
 
 val message = "Parquet conversion for " + Asset + "-" + yearMonth + " completed"
-dbutils.notebook.exit(message)
+dbutils.notebook.exit(message).  
+//you can store this message into a storage file or SQL DB through ADF (Implementation not done as a part of this code)
+//this message will be printed once the complete notebook executes successfully
