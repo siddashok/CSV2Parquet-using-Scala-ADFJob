@@ -1,8 +1,8 @@
 // Databricks notebook source
 // DBTITLE 1,Parameterizing the Asset and yearMonth 
-//Uncomment the next two lines for the first time run, for all further run keep them uncommented
-//AssetPath = dbutils.widgets.text("AssetPath","<defaultval>")
-//yearMonthPath = dbutils.widgets.text("yearMonthPath","<defaultval>")
+//keep the next two lines of code uncommented for the first time run, for all further run make them uncommented
+AssetPath = dbutils.widgets.text("AssetPath","<defaultval>")
+yearMonthPath = dbutils.widgets.text("yearMonthPath","<defaultval>")
 
 // COMMAND ----------
 
@@ -69,6 +69,9 @@ val data = sqlContext.read
   .option("header", "true")
   .load("/mnt/" + CSVcontainerName + "/" + Asset + "/" + yearMonth + "/*.csv")    
 
+//to check if there are any null row values in the CSV
+data.filter(data("timestamp").isNotNull).count()  
+
 display(data).  //display the first 1000 rows 
 data.count().    //displays the number of rows 
 
@@ -88,13 +91,25 @@ data.write
   .mode("overwrite")
   .parquet("/mnt/" + ParquetcontainerName + "/" + Asset + "/" + yearMonth )
 
+//incase any timestamp is null in the parquet , filter it and save into another directory
+val data1 = data.filter(data("timestamp").isNotNull)
+data1.write.parquet("/mnt/"+ ParquetcontainerName + "/Filtered" + Asset + "/" + yearMonth )
+
 // COMMAND ----------
 
 // DBTITLE 1,Read Parquet 
-val data2 = sqlContext.read.parquet("/mnt/" + ParquetcontainerName + "/" + Asset + "/" + yearMonth )
+val data11 = sqlContext.read.parquet("/mnt/" + ParquetcontainerName + "/" + Asset + "/" + yearMonth )          // this dataframe might have null timestamp row
+val data2 = sqlContext.read.parquet("/mnt/" + ParquetcontainerName + "/Filtered" + Asset + "/" + yearMonth )  // this dataframe will not have a single null timestamp
 
-display(data2).  //display the first 1000 rows 
-data2.count().    //displays the number of rows 
+/* all combinations to check for null and not null  timestamp rows in the 2 dataframes data11 and data2 to get the counts*/
+data11.filter(data11("timestamp").isNull).count()  
+data11.filter(data11("timestamp").isNotNull).count() 
+display(data11.filter(data11("timestamp").isNull))
+display(data11.filter(data11("timestamp").isNotNull))
+data2.filter(data2("timestamp").isNull).count()  
+data2.filter(data2("timestamp").isNotNull).count() 
+display(data2.filter(data2("timestamp").isNull))
+display(data2.filter(data2("timestamp").isNotNull))
 
 // COMMAND ----------
 
