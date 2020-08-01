@@ -1,4 +1,4 @@
-# CSVtoParquet using Databricks (Scala) and running Notebook inside Azure Data Factory
+# CSVtoParquet using Databricks (Scala) and running Notebook as Azure Data Factory Job
 Converting CSV files to Parquet 
 
 - Azure storage containers for CSV files and Parquet files are mounted
