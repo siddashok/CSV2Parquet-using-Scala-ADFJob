@@ -1,6 +1,6 @@
 // Databricks notebook source
 // DBTITLE 1,Parameterizing the Asset and yearMonth 
-//keep the next two lines of code uncommented for the first time run, for all further run make them uncommented
+//keep the next two lines of code uncommented for the first time run, for all further run make them commented
 AssetPath = dbutils.widgets.text("AssetPath","<defaultval>")
 yearMonthPath = dbutils.widgets.text("yearMonthPath","<defaultval>")
 
@@ -15,17 +15,17 @@ val yearMonth = dbutils.widgets.get("yearMonthPath")
 
 // DBTITLE 1,CSV Files Storage and Container Details 
 //provide the Azure storage details where your csv files are located (source)
-val CSVstorageAccountName = ""
-val CSVstorageAccountAccessKey = ""   
-val CSVcontainerName = ""
+val CSVstorageAccountName = "<CSVstorageAccountName>"
+val CSVstorageAccountAccessKey = "<CSVstorageAccountAccessKey>"   
+val CSVcontainerName = "<CSVcontainerName>"
 
 // COMMAND ----------
 
 // DBTITLE 1,Parquet Files Storage and Container Details 
 //provide the Azure storage details where you want to store your parquet files (target)
-val ParquetstorageAccountName = ""
-val ParquetstorageAccountAccessKey = "" //
-val ParquetcontainerName = ""
+val ParquetstorageAccountName = "<ParquetstorageAccountName>"
+val ParquetstorageAccountAccessKey = "<ParquetstorageAccountAccessKey>" //
+val ParquetcontainerName = "<ParquetcontainerName>"
 
 // COMMAND ----------
 
